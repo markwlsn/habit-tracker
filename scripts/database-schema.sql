@@ -95,22 +95,26 @@ CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_date ON habit_logs(habit_id, com
 ALTER TABLE habits ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own habits
-CREATE POLICY IF NOT EXISTS "Users can view their own habits"
+DROP POLICY IF EXISTS "Users can view their own habits" ON habits;
+CREATE POLICY "Users can view their own habits"
   ON habits FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can create their own habits
-CREATE POLICY IF NOT EXISTS "Users can create their own habits"
+DROP POLICY IF EXISTS "Users can create their own habits" ON habits;
+CREATE POLICY "Users can create their own habits"
   ON habits FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Users can update their own habits
-CREATE POLICY IF NOT EXISTS "Users can update their own habits"
+DROP POLICY IF EXISTS "Users can update their own habits" ON habits;
+CREATE POLICY "Users can update their own habits"
   ON habits FOR UPDATE
   USING (auth.uid() = user_id);
 
 -- Users can delete their own habits
-CREATE POLICY IF NOT EXISTS "Users can delete their own habits"
+DROP POLICY IF EXISTS "Users can delete their own habits" ON habits;
+CREATE POLICY "Users can delete their own habits"
   ON habits FOR DELETE
   USING (auth.uid() = user_id);
 
@@ -118,17 +122,20 @@ CREATE POLICY IF NOT EXISTS "Users can delete their own habits"
 ALTER TABLE habit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own logs
-CREATE POLICY IF NOT EXISTS "Users can view their own logs"
+DROP POLICY IF EXISTS "Users can view their own logs" ON habit_logs;
+CREATE POLICY "Users can view their own logs"
   ON habit_logs FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Users can create their own logs
-CREATE POLICY IF NOT EXISTS "Users can create their own logs"
+DROP POLICY IF EXISTS "Users can create their own logs" ON habit_logs;
+CREATE POLICY "Users can create their own logs"
   ON habit_logs FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Users can delete their own logs
-CREATE POLICY IF NOT EXISTS "Users can delete their own logs"
+DROP POLICY IF EXISTS "Users can delete their own logs" ON habit_logs;
+CREATE POLICY "Users can delete their own logs"
   ON habit_logs FOR DELETE
   USING (auth.uid() = user_id);
 

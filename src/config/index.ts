@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Load environment variables from .env file
-dotenv.config();
+// Jest must be able to remove variables while testing validation. The runtime still
+// loads .env for local development and production deployments use host variables.
+if (process.env.NODE_ENV !== 'test') dotenv.config();
 
 export interface Config {
   supabase: {

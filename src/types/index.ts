@@ -40,6 +40,19 @@ export interface User {
   email: string;
 }
 
+export interface RegisterDTO {
+  username: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  age: number;
+  email: string;
+  password: string;
+  phone: string;
+  termsAccepted: true;
+  privacyVersion: '2026-09-01';
+}
+
 /**
  * Represents streak data for a habit
  */

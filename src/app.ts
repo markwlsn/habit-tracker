@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import { randomUUID } from 'crypto';
 import { requireAuth } from './middleware/auth.middleware';
 import { errorMiddleware } from './middleware/error.middleware';
 import { validate, validateQuery } from './middleware/validate.middleware';
@@ -8,9 +10,20 @@ import * as auth from './controllers/auth.controller';
 import * as habits from './controllers/habit.controller';
 import * as logs from './controllers/log.controller';
 import { getDashboard } from './controllers/analytics.controller';
+import { log } from './utils/logger';
 
 export const app = express();
-app.use(cors()); app.use(express.json());
+const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173,http://127.0.0.1:5173').split(',').map(origin => origin.trim()).filter(Boolean);
+app.use(cors({ origin: corsOrigins, methods: ['GET', 'POST', 'PUT', 'DELETE'], allowedHeaders: ['Authorization', 'Content-Type'] })); app.use(express.json());
+app.use((req, res, next) => {
+  const requestId = randomUUID(); const startedAt = Date.now();
+  res.setHeader('X-Request-Id', requestId);
+  res.on('finish', () => { if (process.env.NODE_ENV !== 'test') log('info', 'http_request', { requestId, method: req.method, path: req.path, status: res.statusCode, durationMs: Date.now() - startedAt }); });
+  next();
+});
+const limitMessage = { error: { message: 'Too many requests. Please wait and try again.', code: 'RATE_LIMITED' } };
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: 'draft-8', legacyHeaders: false, message: limitMessage, skip: () => process.env.NODE_ENV === 'test' }));
+app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-8', legacyHeaders: false, message: limitMessage, skip: () => process.env.NODE_ENV === 'test' }));
 app.get('/health', (_req, res) => res.json({ data: { status: 'ok' } }));
 app.post('/api/auth/register', validate(registerSchema), auth.register);
 app.post('/api/auth/login', validate(loginSchema), auth.login);

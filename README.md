@@ -107,6 +107,33 @@ npm run dev
 
 The server will start on `http://localhost:3000` (or the port specified in your .env file).
 
+## Frontend
+
+The companion React frontend lives in [`frontend/`](./frontend). It is a separate Vite app and communicates **only** with this Express API; it does not contain or call Supabase credentials directly.
+
+In a second terminal, after starting this API:
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Open the URL Vite prints (normally `http://localhost:5173`). `VITE_API_BASE_URL` defaults to `http://localhost:3000`; set it in `frontend/.env.local` when the API is hosted elsewhere. Do not put Supabase keys in any `VITE_` variable: browser-visible variables are intentionally public.
+
+For local acceptance testing, registration requires a Philippine mobile number and explicit acceptance of the in-app Terms and Privacy Notice. The account stores the normalized number, notice version, and acceptance timestamp in Supabase Auth metadata. Before production, replace the privacy-contact placeholder in the notice with the responsible organization’s real contact details and have the terms reviewed for your business.
+
+The local-testing legal documents are in [Privacy Notice](./docs/PRIVACY_NOTICE.md) and [Terms of Service](./docs/TERMS_OF_SERVICE.md).
+
+Frontend checks:
+
+```bash
+cd frontend
+npm test
+npm run build
+```
+
 ## Available Scripts
 
 - `npm run dev` - Start the TypeScript development server
@@ -172,6 +199,7 @@ npm run test:coverage
 
 ```
 habit-tracker-backend/
+├── frontend/              # React + Vite client (API-only, no Supabase keys)
 ├── src/
 │   ├── config/           # Configuration and environment variables
 │   ├── controllers/      # HTTP request handlers

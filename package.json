@@ -16,7 +16,12 @@
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
   },
-  "keywords": ["habit-tracker", "supabase", "rest-api", "typescript"],
+  "keywords": [
+    "habit-tracker",
+    "supabase",
+    "rest-api",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -24,6 +29,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-rate-limit": "^8.3.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -32,8 +38,8 @@
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.6",
     "@types/supertest": "^6.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
     "eslint": "^8.56.0",
     "fast-check": "^3.15.0",
     "jest": "^29.7.0",

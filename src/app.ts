@@ -1,0 +1,28 @@
+import express from 'express';
+import cors from 'cors';
+import { requireAuth } from './middleware/auth.middleware';
+import { errorMiddleware } from './middleware/error.middleware';
+import { validate, validateQuery } from './middleware/validate.middleware';
+import { createHabitSchema, createLogSchema, dateRangeSchema, loginSchema, registerSchema, updateHabitSchema } from './utils/schemas';
+import * as auth from './controllers/auth.controller';
+import * as habits from './controllers/habit.controller';
+import * as logs from './controllers/log.controller';
+import { getDashboard } from './controllers/analytics.controller';
+
+export const app = express();
+app.use(cors()); app.use(express.json());
+app.get('/health', (_req, res) => res.json({ data: { status: 'ok' } }));
+app.post('/api/auth/register', validate(registerSchema), auth.register);
+app.post('/api/auth/login', validate(loginSchema), auth.login);
+app.post('/api/auth/logout', requireAuth, auth.logout);
+app.post('/api/habits', requireAuth, validate(createHabitSchema), habits.createHabit);
+app.get('/api/habits', requireAuth, habits.getHabits);
+app.get('/api/habits/:id', requireAuth, habits.getHabit);
+app.put('/api/habits/:id', requireAuth, validate(updateHabitSchema), habits.updateHabit);
+app.delete('/api/habits/:id', requireAuth, habits.deleteHabit);
+app.get('/api/habits/:id/streak', requireAuth, habits.getStreak);
+app.post('/api/logs', requireAuth, validate(createLogSchema), logs.createLog);
+app.get('/api/logs/:habitId', requireAuth, validateQuery(dateRangeSchema), logs.getLogs);
+app.delete('/api/logs/:id', requireAuth, logs.deleteLog);
+app.get('/api/analytics/dashboard', requireAuth, validateQuery(dateRangeSchema), getDashboard);
+app.use(errorMiddleware);
